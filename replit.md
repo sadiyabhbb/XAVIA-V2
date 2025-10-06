@@ -2,6 +2,21 @@
 
 XaviaBot is a Facebook Messenger chatbot built on Node.js that provides automated messaging, command handling, gaming features, and economy systems. The bot uses multiple Facebook Chat API implementations (FCA) to maintain persistent connections with Facebook Messenger. It supports plugin-based architecture for commands, events, and custom handlers, with multi-language support and configurable database options (JSON or MongoDB).
 
+# Recent Changes (October 6, 2025)
+
+## Fixed Console Errors
+- ✅ **Removed canvas dependency** - Removed canvas from package.json due to build issues with Node.js 22. Canvas is already disabled in the code (`core/var/common.js`).
+- ✅ **Created missing asset files** - Added empty JSON files for economy features:
+  - `core/var/assets/hen_owners.json`
+  - `core/var/assets/pet_owners.json`
+  - `core/var/assets/plant_owners.json`
+  - `core/var/assets/user_resorts.json`
+- ✅ **Disabled AUTO_PING_SERVER** - Set to `false` in `config/config.main.json` to prevent 410 errors from defunct Glitch service.
+- ✅ **Removed invalid appstate file** - Deleted corrupted `appstate.json`. Bot now requires valid Facebook credentials to run.
+
+## System Dependencies
+- Installed Python 3.11 and system packages (pkg-config, cairo, pango, libpng, etc.) for potential future use with canvas package.
+
 # User Preferences
 
 Preferred communication style: Simple, everyday language.
