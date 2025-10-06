@@ -1,0 +1,30 @@
+{
+    "APPSTATE_PATH": "./appstate.json",
+    "APPSTATE_PROTECTION": true,
+    "AUTO_PING_SERVER": true,
+    "ALLOW_INBOX": false,
+    "DATABASE": "JSON",
+    "DATABASE_JSON_BEAUTIFY": true,
+    "LOGIN": false,
+    "FCA_OPTIONS": {
+        "pauseLog": false,
+        "logLevel": "silent",
+        "selfListen": false,
+        "listenEvents": true,
+        "forceLogin": true,
+        "userAgent": "Mozilla/5.0 (Linux; Android 9; SM-G973U Build/PPR1.180610.011) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Mobile Safari/537.3",
+        "online": true
+    },
+    "LANGUAGE": "en_US",
+    "LOG_LEVEL": 1,
+    "MODERATORS": [
+        "MAIN_UID"
+    ],
+    "ABSOLUTES": [
+        "ADMIN_UID"
+    ],
+    "NAME": "BOT_NAME",
+    "PREFIX": "PREFIX_HERE",
+    "timezone": "Asia/Dhaka",
+    "REFRESH": "43200000"
+}

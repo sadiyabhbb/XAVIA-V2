@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>404 - Page Not Found</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:700,900" rel="stylesheet">
+    <style>
+        * {
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        body {
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        #notfound {
+            position: relative;
+            height: 100vh;
+            background: #0a0a2a;
+            background: linear-gradient(135deg, #0a0a2a 0%, #1a1a4a 100%);
+        }
+
+        #notfound .notfound {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 767px;
+        }
+
+        .notfound {
+            width: 100%;
+            line-height: 1.4;
+            text-align: center;
+        }
+
+        .notfound .notfound-404 {
+            position: relative;
+            height: 180px;
+            margin-bottom: 20px;
+            z-index: 1;
+        }
+
+        .notfound .notfound-404 h1 {
+            font-family: 'Montserrat', sans-serif;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            font-size: 224px;
+            font-weight: 900;
+            margin: 0;
+            color: #0a0a2a;
+            text-transform: uppercase;
+            text-shadow: -1px -1px 0px #00ffcc, 1px 1px 0px #ff3377;
+            letter-spacing: -20px;
+            animation: float 6s ease-in-out infinite, color-cycle 8s infinite;
+        }
+
+        .notfound .notfound-404 h2 {
+            font-family: 'Montserrat', sans-serif;
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 110px;
+            font-size: 42px;
+            font-weight: 700;
+            color: #fff;
+            text-transform: uppercase;
+            text-shadow: 0px 2px 0px #00ffcc;
+            letter-spacing: 13px;
+            margin: 0;
+            animation: pulse 3s infinite;
+        }
+
+        @keyframes color-cycle {
+            0% { text-shadow: -2px -2px 0px #00ffcc, 2px 2px 0px #ff3377; }
+            33% { text-shadow: -2px -2px 0px #00ccff, 2px 2px 0px #ff9933; }
+            66% { text-shadow: -2px -2px 0px #ff66cc, 2px 2px 0px #ffff00; }
+            100% { text-shadow: -2px -2px 0px #00ffcc, 2px 2px 0px #ff3377; }
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.8; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes float {
+            0% { transform: translate(-50%, -50%); }
+            50% { transform: translate(-50%, -52%); }
+            100% { transform: translate(-50%, -50%); }
+        }
+
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            border-radius: 50%;
+            animation: twinkle var(--duration) infinite;
+            opacity: 0;
+            will-change: transform, opacity;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0; }
+            50% { opacity: var(--max-opacity); }
+            100% { opacity: 0; }
+        }
+
+        .glow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: radial-gradient(circle at 50% 50%, rgba(0, 255, 204, 0.1) 0%, rgba(255, 51, 119, 0.05) 50%, transparent 70%);
+            animation: glow-pulse 6s infinite;
+            z-index: 0;
+        }
+
+        @keyframes glow-pulse {
+            0% { opacity: 0.3; }
+            50% { opacity: 0.7; }
+            100% { opacity: 0.3; }
+        }
+
+        @media only screen and (max-width: 767px) {
+            .notfound .notfound-404 h1 {
+                font-size: 150px;
+                letter-spacing: -10px;
+            }
+            
+            .notfound .notfound-404 h2 {
+                font-size: 24px;
+                top: 80px;
+                letter-spacing: 8px;
+            }
+            
+            .notfound .notfound-404 {
+                height: 150px;
+            }
+        }
+
+        @media only screen and (max-width: 480px) {
+            .notfound .notfound-404 h1 {
+                font-size: 120px;
+                letter-spacing: -8px;
+            }
+            
+            .notfound .notfound-404 h2 {
+                font-size: 18px;
+                letter-spacing: 5px;
+                top: 70px;
+            }
+            
+            .notfound .notfound-404 {
+                height: 130px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="notfound">
+        <div class="stars" id="stars"></div>
+        <div class="glow"></div>
+        <div class="notfound">
+            <div class="notfound-404">
+                <h1>404</h1>
+                <h2>Page not found</h2>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const numberOfStars = 60;
+            const fragment = document.createDocumentFragment();
+            
+            for (let i = 0; i < numberOfStars; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                const left = Math.floor(Math.random() * 100);
+                const top = Math.floor(Math.random() * 100);
+                const size = Math.random() * 3 + 1;
+                const duration = 3 + Math.random() * 7 + 's';
+                const delay = Math.random() * 5 + 's';
+                const maxOpacity = 0.5 + Math.random() * 0.5;
+                const colors = ['#00ffcc', '#ff3377', '#ffff00', '#00ccff', '#ffffff'];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                
+                star.style.left = left + '%';
+                star.style.top = top + '%';
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.backgroundColor = color;
+                star.style.setProperty('--duration', duration);
+                star.style.setProperty('--max-opacity', maxOpacity);
+                star.style.animationDelay = delay;
+                
+                fragment.appendChild(star);
+            }
+            
+            starsContainer.appendChild(fragment);
+        }
+        
+        window.onload = function() {
+            createStars();
+        };
+    </script>
+</body>
+</html>
+
