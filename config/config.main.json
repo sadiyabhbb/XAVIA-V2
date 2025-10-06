@@ -5,7 +5,7 @@
     "ALLOW_INBOX": false,
     "DATABASE": "JSON",
     "DATABASE_JSON_BEAUTIFY": true,
-    "LOGIN": true,
+    "LOGIN": false,
     "FCA_OPTIONS": {
         "pauseLog": false,
         "logLevel": "silent",
