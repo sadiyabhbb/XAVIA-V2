@@ -1,9 +1,9 @@
 import "../cleanup.js";
 import {} from "dotenv/config";
-import { writeFileSync } from "fs";
+import { writeFileSync, readFileSync } from "fs";
 import { resolve as resolvePath } from "path";
 import logger from "./var/modules/logger.js";
-import login from "aryan-nix-fca";
+import login from "@xaviabot/fca-unofficial";
 import startServer from "./dashboard/server/app.js";
 import handleListen from "./handlers/listen.js";
 import environments from "./var/modules/environments.get.js";
