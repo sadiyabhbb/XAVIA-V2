@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const config = {
-    name: "aryan",
+    name: "examplecommand",
     aliases: ["example", "demo"],
     version: "0.0.1",
     credits: "ArYAN",
