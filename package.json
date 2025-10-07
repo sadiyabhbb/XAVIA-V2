@@ -1,5 +1,5 @@
 {
-  "name": "xaviabot",
+  "name": "xaviaBot",
   "version": "0.0.8",
   "description": "A Facebook Messenger Bot",
   "main": "index.js",
@@ -53,6 +53,7 @@
     "systeminformation": "^5.25.11",
     "wikijs": "^6.4.0",
     "ws3-fca": "^1.0.12",
+    "yt-search": "^2.13.1",
     "ytdl-core": "^4.11.5"
   }
 }
