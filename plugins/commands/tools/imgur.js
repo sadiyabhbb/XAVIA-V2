@@ -2,7 +2,7 @@ import axios from "axios";
 
 const config = {
   name: "imgur",
-  version: "1.0.0",
+  version: "0.0.1",
   credits: "ArYAN",
   permissions: [0],
   cooldowns: 0,
