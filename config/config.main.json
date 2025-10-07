@@ -2,7 +2,7 @@
     "APPSTATE_PATH": "./appstate.json",
     "APPSTATE_PROTECTION": true,
     "AUTO_PING_SERVER": false,
-    "ALLOW_INBOX": false,
+    "ALLOW_INBOX": true,
     "DATABASE": "JSON",
     "DATABASE_JSON_BEAUTIFY": true,
     "LOGIN": false,
@@ -18,13 +18,13 @@
     "LANGUAGE": "en_US",
     "LOG_LEVEL": 1,
     "MODERATORS": [
-        "MAIN_UID"
+        "61572915213085"
     ],
     "ABSOLUTES": [
-        "ADMIN_UID"
+        "61572915213085"
     ],
-    "NAME": "nix bot",
-    "PREFIX": "!",
+    "NAME": "LIKHON BOT",
+    "PREFIX": "/",
     "timezone": "Asia/Dhaka",
     "REFRESH": "43200000"
 }
