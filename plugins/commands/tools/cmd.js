@@ -1,13 +1,14 @@
 import fs from "fs";
 import path from "path";
+import { pathToFileURL } from "url";
 
 const config = {
   name: "cmd",
   aliases: ["command", "module"],
-  version: "1.0.2",
+  version: "1.0.3",
   credits: "Sathi x GPT-5",
   description: "Install, reload or reload all commands dynamically",
-  usage: "cmd <install|load|loadall> [filename or folder]",
+  usage: "cmd <install|load|loadall> [filename]",
   cooldowns: 3,
   category: "system"
 };
@@ -43,9 +44,8 @@ async function installCommand({ message, args, getLang }) {
   try {
     ensureCommandsDir();
 
-    if (!fs.existsSync(srcPath)) {
+    if (!fs.existsSync(srcPath))
       return message.reply(`❌ File not found: ${srcPath}`);
-    }
 
     if (fs.existsSync(destPath)) {
       return message.reply(getLang("install.exists", { name: fileName })).then(m =>
@@ -79,11 +79,13 @@ async function loadCommand({ message, args, getLang }) {
   if (!name) return message.reply("⚙️ Usage: cmd load <file.js>");
 
   const cmdPath = path.join(pluginsDir, name);
-  if (!fs.existsSync(cmdPath)) return message.reply(`❌ Command not found: ${name}`);
+  if (!fs.existsSync(cmdPath))
+    return message.reply(`❌ Command not found: ${name}`);
 
   try {
-    delete require.cache[require.resolve(cmdPath)];
-    await import(cmdPath + `?v=${Date.now()}`);
+    // reload dynamically
+    const fileUrl = pathToFileURL(cmdPath).href + `?v=${Date.now()}`;
+    await import(fileUrl);
     message.reply(getLang("load.success", { name }));
   } catch (err) {
     message.reply(getLang("load.error", { name, error: err.message }));
@@ -95,21 +97,22 @@ async function loadAllCommands({ message, getLang }) {
     ensureCommandsDir();
     message.reply(getLang("loadall.start"));
 
-    // scan all subfolders under plugins/commands
-    const scanDir = (dir) => {
+    const scanDir = async (dir) => {
       const files = fs.readdirSync(dir);
       for (const f of files) {
         const full = path.join(dir, f);
         const stat = fs.statSync(full);
-        if (stat.isDirectory()) scanDir(full);
+        if (stat.isDirectory()) await scanDir(full);
         else if (f.endsWith(".js")) {
-          delete require.cache[require.resolve(full)];
-          import(full + `?reload=${Date.now()}`).catch(() => {});
+          const fileUrl = pathToFileURL(full).href + `?reload=${Date.now()}`;
+          await import(fileUrl).catch(e =>
+            console.log(`❌ Failed to load '${f}': ${e.message}`)
+          );
         }
       }
     };
-    scanDir(pluginsDir);
 
+    await scanDir(pluginsDir);
     message.reply(getLang("loadall.done"));
   } catch (err) {
     message.reply(`❌ Failed to load all: ${err.message}`);
@@ -124,7 +127,7 @@ async function onCall({ message, args, getLang }) {
   if (action === "load") return loadCommand({ message, args, getLang });
   if (action === "loadall") return loadAllCommands({ message, getLang });
 
-  return message.reply(getLang("invalid.action"));
+  message.reply(getLang("invalid.action"));
 }
 
 export default { config, langData, onCall };
