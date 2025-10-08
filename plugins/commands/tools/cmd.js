@@ -4,54 +4,61 @@ import path from "path";
 const config = {
   name: "cmd",
   aliases: ["command", "module"],
-  version: "1.0.0",
+  version: "1.0.2",
   credits: "Sathi x GPT-5",
-  description: "Manage bot commands dynamically (install, load, loadall)",
-  usage: "cmd <install/load/loadall> [filename]",
+  description: "Install, reload or reload all commands dynamically",
+  usage: "cmd <install|load|loadall> [filename or folder]",
   cooldowns: 3,
   category: "system"
 };
 
 const langData = {
   "en_US": {
-    "install.usage": "⚙️ Usage: cmd install <file.js>",
-    "install.exists": "⚠️ The command '{name}' already exists. React ✅ to reinstall.",
+    "install.usage": "⚙️ Usage: cmd install <path/to/file.js>",
+    "install.exists": "⚠️ Command '{name}' already exists. React ✅ to overwrite.",
     "install.success": "✅ Installed command '{name}' successfully!",
-    "install.error": "❌ Failed to install: {error}",
-    "load.success": "🔁 Command '{name}' reloaded successfully!",
-    "load.error": "❌ Error loading '{name}': {error}",
-    "loadall.start": "♻️ Reloading all commands...",
-    "loadall.done": "✅ All commands reloaded successfully!",
-    "invalid.action": "❌ Invalid action. Use: install | load | loadall"
+    "install.error": "❌ Installation failed: {error}",
+    "load.success": "🔁 Reloaded command '{name}' successfully!",
+    "load.error": "❌ Failed to load '{name}': {error}",
+    "loadall.start": "♻️ Reloading all plugin commands...",
+    "loadall.done": "✅ All plugin commands reloaded!",
+    "invalid.action": "❌ Invalid action. Use install | load | loadall"
   }
 };
 
-async function installCommand({ message, args, getLang }) {
-  const fileName = args[1];
-  if (!fileName) return message.reply(getLang("install.usage"));
+const pluginsDir = path.join(process.cwd(), "plugins", "commands");
 
-  const srcPath = path.resolve(fileName);
-  const destDir = path.join(process.cwd(), "commands");
-  const destPath = path.join(destDir, path.basename(fileName));
+function ensureCommandsDir() {
+  if (!fs.existsSync(pluginsDir)) fs.mkdirSync(pluginsDir, { recursive: true });
+}
+
+async function installCommand({ message, args, getLang }) {
+  const src = args[1];
+  if (!src) return message.reply(getLang("install.usage"));
+
+  const srcPath = path.resolve(src);
+  const fileName = path.basename(srcPath);
+  const destPath = path.join(pluginsDir, fileName);
 
   try {
+    ensureCommandsDir();
+
     if (!fs.existsSync(srcPath)) {
       return message.reply(`❌ File not found: ${srcPath}`);
     }
 
     if (fs.existsSync(destPath)) {
-      return message.reply(getLang("install.exists", { name: path.basename(fileName) }))
-        .then(d => {
-          d.addReactEvent({
-            callback: handleReactInstall,
-            author: message.senderID,
-            data: { srcPath, destPath }
-          }, 30000);
-        });
+      return message.reply(getLang("install.exists", { name: fileName })).then(m =>
+        m.addReactEvent({
+          callback: handleReactInstall,
+          author: message.senderID,
+          data: { srcPath, destPath }
+        }, 30000)
+      );
     }
 
     fs.copyFileSync(srcPath, destPath);
-    message.reply(getLang("install.success", { name: path.basename(fileName) }));
+    message.reply(getLang("install.success", { name: fileName }));
   } catch (err) {
     message.reply(getLang("install.error", { error: err.message }));
   }
@@ -61,7 +68,7 @@ async function handleReactInstall({ message, eventData }) {
   const { srcPath, destPath } = eventData;
   try {
     fs.copyFileSync(srcPath, destPath);
-    message.send(`✅ Reinstalled command: ${path.basename(destPath)}`);
+    message.send(`✅ Overwritten & reinstalled: ${path.basename(destPath)}`);
   } catch (err) {
     message.send(`❌ Failed reinstall: ${err.message}`);
   }
@@ -69,14 +76,14 @@ async function handleReactInstall({ message, eventData }) {
 
 async function loadCommand({ message, args, getLang }) {
   const name = args[1];
-  if (!name) return message.reply("⚙️ Usage: cmd load <filename.js>");
+  if (!name) return message.reply("⚙️ Usage: cmd load <file.js>");
 
-  const cmdPath = path.join(process.cwd(), "commands", name);
+  const cmdPath = path.join(pluginsDir, name);
   if (!fs.existsSync(cmdPath)) return message.reply(`❌ Command not found: ${name}`);
 
   try {
     delete require.cache[require.resolve(cmdPath)];
-    await import(cmdPath + `?update=${Date.now()}`);
+    await import(cmdPath + `?v=${Date.now()}`);
     message.reply(getLang("load.success", { name }));
   } catch (err) {
     message.reply(getLang("load.error", { name, error: err.message }));
@@ -85,15 +92,23 @@ async function loadCommand({ message, args, getLang }) {
 
 async function loadAllCommands({ message, getLang }) {
   try {
+    ensureCommandsDir();
     message.reply(getLang("loadall.start"));
-    const commandsDir = path.join(process.cwd(), "commands");
-    const files = fs.readdirSync(commandsDir).filter(f => f.endsWith(".js"));
 
-    for (const file of files) {
-      const filePath = path.join(commandsDir, file);
-      delete require.cache[require.resolve(filePath)];
-      await import(filePath + `?reload=${Date.now()}`);
-    }
+    // scan all subfolders under plugins/commands
+    const scanDir = (dir) => {
+      const files = fs.readdirSync(dir);
+      for (const f of files) {
+        const full = path.join(dir, f);
+        const stat = fs.statSync(full);
+        if (stat.isDirectory()) scanDir(full);
+        else if (f.endsWith(".js")) {
+          delete require.cache[require.resolve(full)];
+          import(full + `?reload=${Date.now()}`).catch(() => {});
+        }
+      }
+    };
+    scanDir(pluginsDir);
 
     message.reply(getLang("loadall.done"));
   } catch (err) {
@@ -109,11 +124,7 @@ async function onCall({ message, args, getLang }) {
   if (action === "load") return loadCommand({ message, args, getLang });
   if (action === "loadall") return loadAllCommands({ message, getLang });
 
-  message.reply(getLang("invalid.action"));
+  return message.reply(getLang("invalid.action"));
 }
 
-export default {
-  config,
-  langData,
-  onCall,
-};
+export default { config, langData, onCall };
