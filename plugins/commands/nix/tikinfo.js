@@ -4,7 +4,7 @@ const config = {
   name: "tikstalk",
   aliases: ["tiktokstalk", "tinfo"],
   version: "0.0.1",
-  credits: "ArYAN",
+  credits: "ARYAN",
   permissions: [0],
   cooldowns: 5,
   description: "Get full TikTok profile info - stalk a TikTok profile",
