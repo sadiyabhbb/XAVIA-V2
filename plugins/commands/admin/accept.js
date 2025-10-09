@@ -3,7 +3,7 @@ import moment from "moment-timezone";
 const config = {
   name: "accept",
   version: "1.0.0",
-  credits: "BLACK X",
+  credits: "BLACK-X",
   permissions: [2],
   description: "Make friends via Facebook ID",
   usages: "uid",
